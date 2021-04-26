@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProcessingFacility extends Model
 {
     use HasFactory;
+    protected $keyType = 'string';
+    public $incrementing = false;
+    protected $primaryKey = 'id';
 }
