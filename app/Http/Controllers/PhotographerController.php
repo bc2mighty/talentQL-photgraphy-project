@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Photographer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class PhotographerController extends Controller
 {
@@ -35,7 +37,27 @@ class PhotographerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'brand' => 'required',
+            'phone' => 'required',
+            'address' => 'required',
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+
+        $photographer = new Photographer();
+        $photographer->id = (string) Str::uuid();
+        $photographer->name = $request->name;
+        $photographer->brand = $request->brand;
+        $photographer->phone = $request->phone;
+        $photographer->address = $request->address;
+        $photographer->email = $request->email;
+        $photographer->password =  Hash::make($request->password);
+        
+        $photographer->save();
+
+        return response()->json(['message' => 'Photographer Account Created Successfully']);
     }
 
     /**
