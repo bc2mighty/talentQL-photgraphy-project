@@ -14,7 +14,11 @@ class CreateProductPhotographsTable extends Migration
     public function up()
     {
         Schema::create('product_photographs', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id');
+            $table->string('product_id');
+            $table->json('thumbnails');
+            $table->json('high_resolution_images');
+            $table->boolean('approved')->nullable();
             $table->timestamps();
         });
     }

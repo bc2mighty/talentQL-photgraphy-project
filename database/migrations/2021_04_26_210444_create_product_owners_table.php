@@ -14,7 +14,14 @@ class CreateProductOwnersTable extends Migration
     public function up()
     {
         Schema::create('product_owners', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id');
+            $table->string('brand');
+            $table->string('slack_hook');
+            $table->string('slack_product_channel');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
             $table->timestamps();
         });
     }

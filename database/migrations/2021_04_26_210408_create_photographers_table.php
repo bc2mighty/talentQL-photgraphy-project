@@ -14,7 +14,15 @@ class CreatePhotographersTable extends Migration
     public function up()
     {
         Schema::create('photographers', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id');
+            $table->string('name');
+            $table->string('brand');
+            $table->string('phone');
+            $table->text('address');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
             $table->timestamps();
         });
     }
