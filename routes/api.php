@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PhotographerController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductOwnerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -33,3 +34,6 @@ Route::group(['prefix' => 'productOwner'], function (){
     Route::put('/{productOwner}', [ProductOwnerController::class, 'update']);
     Route::post('/login', [ProductOwnerController::class, 'login']);
 });
+
+// Prouct Routes
+Route::resource('products', ProductController::class);
