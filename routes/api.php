@@ -25,6 +25,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['prefix' => 'photographer'], function (){
     Route::post('/create', [PhotographerController::class, 'store']);
     Route::put('/{photographer}', [PhotographerController::class, 'update']);
+    Route::post('/{photographer}/product/{product}', [PhotographerController::class, 'pictures']);
     Route::post('/login', [PhotographerController::class, 'login']);
 });
 

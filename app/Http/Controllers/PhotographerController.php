@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Photographer;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image as Image;
 
 class PhotographerController extends Controller
 {
@@ -43,6 +46,50 @@ class PhotographerController extends Controller
         $photographer->save();
 
         return response()->json(['message' => 'Photographer Account Created Successfully']);
+    }
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function pictures(Request $request, Photographer $photographer, Product $product): Object
+    {
+        $validator = Validator::make($request->all(), [
+            'pictures' => 'required|array',
+            'pictures.*' => 'required|file|mimes:jpg,png,jpeg',
+        ]);
+
+        if($validator->fails()) {
+            return response()->json(['message' => 'Validation Error', 'errors' => $validator->errors()], 422);
+        }
+
+        $pictures = $request->file('pictures');
+        $highResolutionPictures = [];
+        $thumbnails = [];
+
+        foreach($pictures as $picture) {
+            $pictureName = (string) Str::uuid().".".$picture->getClientOriginalExtension();
+            $s3 = Storage::disk('s3');
+
+            $filePath = "/uploads/" . $pictureName;
+            $s3->put($filePath, file_get_contents($picture), 'public');
+
+
+            $thumbnailFilePath = "/uploads/thumbnail-" . $pictureName;
+            $thumbnailImg = Image::make($picture)->resize(300, 200);
+
+            $s3->put($thumbnailFilePath, file_get_contents($thumbnailImg), 'public');
+
+            array_push($highResolutionPictures, env('AWS_URL').$filePath);
+            array_push($thumbnails, env('AWS_URL').$thumbnailFilePath);
+        }
+        dd($highResolutionPictures, $thumbnails);
+
+        return response()->json([
+            'message' => 'Product Pictures',
+            'pictures' => $pictures
+        ]);
     }
 
     /**
