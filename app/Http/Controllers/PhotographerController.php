@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Photographer;
 use App\Models\Product;
+use App\Models\ProductPhotograph;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -75,14 +76,19 @@ class PhotographerController extends Controller
             $photographer->brand, 
             $product->title
         );
+        
+        $productPhotograph = new ProductPhotograph();
+        $productPhotograph->id = (string) Str::uuid();
+        $productPhotograph->product_id = $product->id;
+        $productPhotograph->photographer_id = $photographer->id;
+        $productPhotograph->thumbnails = json_encode($s3UploadResponse['thumbnails']);
+        $productPhotograph->high_resolution_images = json_encode($s3UploadResponse['highResolutions']);
+        $productPhotograph->approved = false;
 
-        if(!$response) {
-            
-        }
+        $productPhotograph->save();
 
         return response()->json([
-            'message' => 'Product Pictures',
-            'pictures' => $response
+            'message' => 'Product Pictures Uploaded And Processed Successfully!',
         ]);
     }
 
