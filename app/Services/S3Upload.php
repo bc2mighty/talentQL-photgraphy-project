@@ -14,7 +14,7 @@ class S3Upload {
 
     public function __construct()
     {
-        $this->s3 =  Storage::disk('s3');
+        $this->s3 = Storage::disk('s3');
     }
 
     public function uploadAndGenerateThumbnail($pictures) {
