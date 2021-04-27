@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\ProductOwner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -43,6 +44,41 @@ class ProductOwnerController extends Controller
 
         return response()->json([
             'message' => 'ProductOwner Account Created Successfully'
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     */
+    public function product(Request $request, ProductOwner $productOwner, Product $product)
+    {
+        $validator = Validator::make($request->all(), [
+            'in_processing_facility' => 'required|boolean',
+        ]);
+
+        if($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation Error', 
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        
+        if($productOwner->id != $product->product_owner_id) 
+            return response()->json([
+                'message' => 'Product Owner and product mismatch'
+            ], 422);
+      
+        $product->in_processing_facility = $request->in_processing_facility;
+        
+        $product->save();
+
+        return response()->json([
+            'message' => 'Product Updated Successfully',
+            'product' => $product,
         ]);
     }
 

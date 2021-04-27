@@ -21,7 +21,6 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'product_owner_id' => 'required',
-            'in_processing_facility' => 'required|boolean',
         ]);
 
         if($validator->fails()) {
@@ -42,7 +41,6 @@ class ProductController extends Controller
         $product->id = (string) Str::uuid();
         $product->title = $request->title;
         $product->product_owner_id = $request->product_owner_id;
-        $product->in_processing_facility = $request->in_processing_facility;
         
         $product->save();
 
@@ -78,7 +76,6 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'product_owner_id' => 'required',
-            'in_processing_facility' => 'required|boolean',
         ]);
 
         if($validator->fails()) {
@@ -97,7 +94,6 @@ class ProductController extends Controller
       
         $product->title = $request->title;
         $product->product_owner_id = $request->product_owner_id;
-        $product->in_processing_facility = $request->in_processing_facility;
         
         $product->save();
 

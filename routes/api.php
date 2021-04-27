@@ -33,6 +33,7 @@ Route::group(['prefix' => 'productOwner'], function (){
     Route::post('/create', [ProductOwnerController::class, 'store']);
     Route::put('/{productOwner}', [ProductOwnerController::class, 'update']);
     Route::post('/login', [ProductOwnerController::class, 'login']);
+    Route::put('/{productOwner}/{product}', [ProductOwnerController::class, 'product']);
 });
 
 // Prouct Routes
