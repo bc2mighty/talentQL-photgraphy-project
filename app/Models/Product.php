@@ -11,4 +11,8 @@ class Product extends Model
     protected $keyType = 'string';
     public $incrementing = false;
     protected $primaryKey = 'id';
+
+    public function product_owner() {
+        return $this->belongsTo(ProductOwner::class);
+    }
 }

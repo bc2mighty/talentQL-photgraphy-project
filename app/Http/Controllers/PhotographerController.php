@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Services\S3Upload;
+use App\Services\SlackNotification;
 
 class PhotographerController extends Controller
 {
@@ -65,13 +66,23 @@ class PhotographerController extends Controller
 
         $pictures = $request->file('pictures');
         $s3Upload = new S3Upload();
-        $response = $s3Upload->uploadAndGenerateThumbnail($pictures);
+        $s3UploadResponse = json_decode($s3Upload->uploadAndGenerateThumbnail($pictures), true);
         
-        dd(json_decode($response, true));
+        $slackNotification = new SlackNotification($product->product_owner->slack_hook_url);
+        $response = $slackNotification->prepareAndSendMessage(
+            $s3UploadResponse['thumbnails'],
+            time(),
+            $photographer->brand, 
+            $product->title
+        );
+
+        if(!$response) {
+            
+        }
 
         return response()->json([
             'message' => 'Product Pictures',
-            'pictures' => $pictures
+            'pictures' => $response
         ]);
     }
 

@@ -6,90 +6,100 @@ use Illuminate\Support\Facades\Http;
 
 class SlackNotification {
     public $slackHookUrl;
-    public $message;
+    public $blocks = [];
+    public $message = [];
+    public $header;
+    public $description;
+    public $links;
 
     public function __construct($slackHookUrl)
     {
         $this->slackHookUrl = $slackHookUrl;
     }
 
-    public function sendNotification()
+    public function sendNotification($message)
     {
-
+        return Http::post($this->slackHookUrl, $message)->throw(function ($response, $e) {
+            dd($e);
+        })->json();
     }
 
-    public function generatePostData($thumbnails, $photographer, $timeUploaded) {
-        $this->message = [
-            "blocks" => [
+    public function prepareAndSendMessage($thumbnails, $dateUploaded, $photographer, $product)
+    {
+        $this->blocks = [
+            [
+                "type" => "header",
+                "text" => [
+                    "type" => "plain_text",
+                    "text" => "New Pictrues for $product",
+                    "emoji" => true
+                ]
+            ],
+            [
+                "type" => "section",
+                "fields" => [
                     [
-                        "type" => "header",
-                        "text" => [
-                            "type" => "plain_text",
-                            "text" => "New request",
-                            "emoji" => true
-                        ]
+                        "type" => "mrkdwn",
+                        "text" => "*Date:*\n$dateUploaded"
                     ],
                     [
-                        "type" => "section",
-                        "fields" => [
-                            [
-                                "type" => "mrkdwn",
-                                "text" => "*Type:*\nPaid Time Off"
-                            ],
-                            [
-                                "type" => "mrkdwn",
-                                "text" => "*Created by: ".$photographer
-                            ]
-                        ]
-                    ],
-                    [
-                        "type" => "section",
-                        "fields" => [
-                            [
-                                "type" => "mrkdwn",
-                                "text" => "*When:*\nAug 10 - Aug 13"
-                            ]
-                        ]
-                    ],
-                    [
-                    "type" => "image",
-                    "title" => [
-                        "type" => "plain_text",
-                        "text" => "Please enjoy this photo of a kitten"
-                    ],
-                    [
-                    "block_id" => "image4",
-                    "image_url" => "http://placekitten.com/500/500",
-                    "alt_text" => "An incredibly cute kitten."
-                    ],
-                    [
-                        "type" => "actions",
-                        "elements" => [
-                            [
-                                "type" => "button",
-                                "text" => [
-                                    "type" => "plain_text",
-                                    "emoji" => true,
-                                    "text" => "Approve"
-                                ],
-                                "url" => "https://api.slack.com/block-kit",
-                                "style" => "primary",
-                                "value" => "click_me_123"
-                            ],
-                            [
-                                "type" => "button",
-                                "text" => [
-                                    "type" => "plain_text",
-                                    "emoji" => true,
-                                    "text" => "Reject"
-                                ],
-                                "style" => "danger",
-                                "value" => "click_me_123"
-                            ]
-                        ]
+                        "type" => "mrkdwn",
+                        "text" => "*Created by: *\n".$photographer
                     ]
                 ]
             ]
         ];
+        
+        foreach($thumbnails as $key=>$thumbnail) {
+            
+            array_push($this->blocks, 
+            [
+                "type" => "image",
+                "title" => [
+                    "type" => "plain_text",
+                    "text" => "Photo".($key + 1)." of $product"
+                ],
+                "block_id" => "image".($key + 1),
+                "image_url" => $thumbnail,
+                "alt_text" => "Photo".($key + 1)
+            ]);
+        }
+        
+        array_push($this->blocks, 
+        [
+            "type" => "actions",
+            "elements" => [
+                [
+                    "type" => "button",
+                    "text" => [
+                        "type" => "plain_text",
+                        "emoji" => true,
+                        "text" => "Approve"
+                    ],
+                    "url" => env('FRONTEND_URL')."/approve/product",
+                    "style" => "primary",
+                    "value" => "click_me_123"
+                ],
+                [
+                    "type" => "button",
+                    "text" => [
+                        "type" => "plain_text",
+                        "emoji" => true,
+                        "text" => "Disapprove"
+                    ],
+                    "style" => "danger",
+                    "value" => "click_me_123"
+                ]
+            ]
+        ]);
+        // return [
+        //     "blocks" => $this->blocks
+        // ];
+
+        $response = $this->sendNotification([
+            "blocks" => $this->blocks
+        ]);
+
+        return $response;
     }
 }
