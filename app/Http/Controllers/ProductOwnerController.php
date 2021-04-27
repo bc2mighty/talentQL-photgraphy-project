@@ -39,11 +39,8 @@ class ProductOwnerController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'slack_hook' => 'required',
-            'slack_product_channel' => 'required',
-            'brand' => 'required',
-            'phone' => 'required',
-            'address' => 'required',
+            'slack_hook_url' => 'required|url',
+            'company_name' => 'required',
             'email' => 'email:rfc,dns|unique:product_owners',
             'password' => 'required',
         ]);
@@ -54,10 +51,8 @@ class ProductOwnerController extends Controller
 
         $product_owner = new ProductOwner();
         $product_owner->id = (string) Str::uuid();
-        $product_owner->name = $request->name;
-        $product_owner->brand = $request->brand;
-        $product_owner->phone = $request->phone;
-        $product_owner->address = $request->address;
+        $product_owner->slack_hook_url = $request->slack_hook_url;
+        $product_owner->company_name = $request->company_name;
         $product_owner->email = $request->email;
         $product_owner->password =  Hash::make($request->password);
         

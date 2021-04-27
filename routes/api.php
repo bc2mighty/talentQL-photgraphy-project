@@ -28,7 +28,7 @@ Route::group(['prefix' => 'photographer'], function (){
 });
 
 // Prouct Owners' Routes
-Route::group(['prefix' => 'photographer'], function (){
+Route::group(['prefix' => 'product_owner'], function (){
     Route::post('/create', [ProductOwnerController::class, 'store']);
     Route::put('/{product_owner}', [ProductOwnerController::class, 'update']);
     Route::post('/login', [ProductOwnerController::class, 'login']);
