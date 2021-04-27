@@ -119,7 +119,6 @@ class PhotographerController extends Controller
             'phone' => 'required',
             'address' => 'required',
             'email' => 'email:rfc,dns|unique:photographers,email,'.$photographer->id,
-            'password' => 'required',
         ]);
 
         if($validator->fails()) {
@@ -131,7 +130,6 @@ class PhotographerController extends Controller
         $photographer->phone = $request->phone;
         $photographer->address = $request->address;
         $photographer->email = $request->email;
-        $photographer->password =  Hash::make($request->password);
         
         $photographer->save();
 

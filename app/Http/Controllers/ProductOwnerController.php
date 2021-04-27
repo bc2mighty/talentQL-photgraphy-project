@@ -49,14 +49,14 @@ class ProductOwnerController extends Controller
             return response()->json(['message' => 'Validation Error', 'errors' => $validator->errors()], 422);
         }
 
-        $product_owner = new ProductOwner();
-        $product_owner->id = (string) Str::uuid();
-        $product_owner->slack_hook_url = $request->slack_hook_url;
-        $product_owner->company_name = $request->company_name;
-        $product_owner->email = $request->email;
-        $product_owner->password =  Hash::make($request->password);
+        $productOwner = new ProductOwner();
+        $productOwner->id = (string) Str::uuid();
+        $productOwner->slack_hook_url = $request->slack_hook_url;
+        $productOwner->company_name = $request->company_name;
+        $productOwner->email = $request->email;
+        $productOwner->password =  Hash::make($request->password);
         
-        $product_owner->save();
+        $productOwner->save();
 
         return response()->json(['message' => 'ProductOwner Account Created Successfully']);
     }
@@ -90,9 +90,25 @@ class ProductOwnerController extends Controller
      * @param  \App\Models\ProductOwner  $productOwner
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ProductOwner $productOwner)
+    public function update(Request $request, ProductOwner $productOwner): Object
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'slack_hook_url' => 'required|url',
+            'company_name' => 'required',
+            'email' => 'email:rfc,dns|unique:product_owners,email,'.$productOwner->id,
+        ]);
+
+        if($validator->fails()) {
+            return response()->json(['message' => 'Validation Error', 'errors' => $validator->errors()], 422);
+        }
+
+        $productOwner->slack_hook_url = $request->slack_hook_url;
+        $productOwner->company_name = $request->company_name;
+        $productOwner->email = $request->email;
+        
+        $productOwner->save();
+
+        return response()->json(['message' => 'ProductOwner Account Created Successfully', 'productOwner' => $productOwner]);
     }
 
     /**
