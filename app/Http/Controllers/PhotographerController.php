@@ -50,7 +50,7 @@ class PhotographerController extends Controller
         if($validator->fails()) {
             return response()->json(['message' => 'Validation Error', 'errors' => $validator->errors()], 422);
         }
-
+      
         $photographer = new Photographer();
         $photographer->id = (string) Str::uuid();
         $photographer->name = $request->name;
