@@ -6,10 +6,9 @@ use App\Models\Photographer;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image as Image;
+use App\Services\S3Upload;
 
 class PhotographerController extends Controller
 {
@@ -65,26 +64,10 @@ class PhotographerController extends Controller
         }
 
         $pictures = $request->file('pictures');
-        $highResolutionPictures = [];
-        $thumbnails = [];
-
-        foreach($pictures as $picture) {
-            $pictureName = (string) Str::uuid().".".$picture->getClientOriginalExtension();
-            $s3 = Storage::disk('s3');
-
-            $filePath = "/uploads/" . $pictureName;
-            $s3->put($filePath, file_get_contents($picture), 'public');
-
-
-            $thumbnailFilePath = "/uploads/thumbnail-" . $pictureName;
-            $thumbnailImg = Image::make($picture)->resize(300, 200);
-
-            $s3->put($thumbnailFilePath, file_get_contents($thumbnailImg), 'public');
-
-            array_push($highResolutionPictures, env('AWS_URL').$filePath);
-            array_push($thumbnails, env('AWS_URL').$thumbnailFilePath);
-        }
-        dd($highResolutionPictures, $thumbnails);
+        $s3Upload = new S3Upload();
+        $response = $s3Upload->uploadAndGenerateThumbnail($pictures);
+        
+        dd(json_decode($response, true));
 
         return response()->json([
             'message' => 'Product Pictures',
