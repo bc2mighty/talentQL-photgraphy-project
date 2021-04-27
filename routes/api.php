@@ -34,6 +34,7 @@ Route::group(['prefix' => 'productOwner'], function (){
     Route::put('/{productOwner}', [ProductOwnerController::class, 'update']);
     Route::post('/login', [ProductOwnerController::class, 'login']);
     Route::put('/{productOwner}/{product}', [ProductOwnerController::class, 'product']);
+    Route::get('/{productOwner}/products', [ProductOwnerController::class, 'products']);
 });
 
 // Prouct Routes

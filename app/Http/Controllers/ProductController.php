@@ -11,6 +11,23 @@ use Illuminate\Support\Str;
 class ProductController extends Controller
 {
     /**
+     * Get all products in processing facility
+     *
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     */
+    public function index(): Object
+    {
+        $products = Product::where('in_processing_facility', 1)
+            ->get();
+
+        return response()->json([
+            'message' => 'All Products in processing facilities',
+            'products' => $products,
+        ]);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -109,7 +126,7 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product): Object
     {
         $product->delete();
         // Delete Product Images

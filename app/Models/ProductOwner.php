@@ -11,4 +11,8 @@ class ProductOwner extends Model
     protected $keyType = 'string';
     public $incrementing = false;
     protected $primaryKey = 'id';
+
+    public function products() {
+        return $this->hasMany(Product::class);
+    }
 }

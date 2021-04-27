@@ -12,6 +12,20 @@ use Illuminate\Support\Str;
 class ProductOwnerController extends Controller
 {
     /**
+     * Get all products created by Product Owner
+     *
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     */
+    public function products(ProductOwner $productOwner): Object
+    {
+        return response()->json([
+            'message' => 'All Products Owned By product Owner',
+            'products' => $productOwner->products,
+        ]);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
