@@ -11,32 +11,12 @@ use Illuminate\Support\Str;
 class ProductOwnerController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): Object
     {
         $validator = Validator::make($request->all(), [
             'slack_hook_url' => 'required|url',
@@ -46,7 +26,10 @@ class ProductOwnerController extends Controller
         ]);
 
         if($validator->fails()) {
-            return response()->json(['message' => 'Validation Error', 'errors' => $validator->errors()], 422);
+            return response()->json([
+                'message' => 'Validation Error', 
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         $productOwner = new ProductOwner();
@@ -58,7 +41,9 @@ class ProductOwnerController extends Controller
         
         $productOwner->save();
 
-        return response()->json(['message' => 'ProductOwner Account Created Successfully']);
+        return response()->json([
+            'message' => 'ProductOwner Account Created Successfully'
+        ]);
     }
 
     /**
@@ -67,20 +52,37 @@ class ProductOwnerController extends Controller
      * @param  \App\Models\ProductOwner  $productOwner
      * @return \Illuminate\Http\Response
      */
-    public function show(ProductOwner $productOwner)
+    public function login(Request $request): Object
     {
-        //
-    }
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email:rfc,dns',
+            'password' => 'required',
+        ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\ProductOwner  $productOwner
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ProductOwner $productOwner)
-    {
-        //
+        if($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation Error', 
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $productOwner = ProductOwner::where('email', $request->email)
+            ->first();
+        
+        if(!$productOwner) 
+            return response()->json([
+                'message' => 'ProductOwner Account Not Found'
+            ], 422);
+        
+        if(!Hash::check($request->password, $productOwner->password)) 
+            return response()->json([
+                'message' => 'ProductOwner Password Incorrect'
+            ], 422);
+
+        return response()->json([
+            'message' => 'ProductOwner Login Successful', 
+            'productOwner' => $productOwner
+        ]);
     }
 
     /**
@@ -99,7 +101,10 @@ class ProductOwnerController extends Controller
         ]);
 
         if($validator->fails()) {
-            return response()->json(['message' => 'Validation Error', 'errors' => $validator->errors()], 422);
+            return response()->json([
+                'message' => 'Validation Error', 
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         $productOwner->slack_hook_url = $request->slack_hook_url;
@@ -108,17 +113,9 @@ class ProductOwnerController extends Controller
         
         $productOwner->save();
 
-        return response()->json(['message' => 'ProductOwner Account Created Successfully', 'productOwner' => $productOwner]);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\ProductOwner  $productOwner
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(ProductOwner $productOwner)
-    {
-        //
+        return response()->json([
+            'message' => 'ProductOwner Account Created Successfully', 
+            'productOwner' => $productOwner
+        ]);
     }
 }

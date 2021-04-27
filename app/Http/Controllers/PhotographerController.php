@@ -11,26 +11,6 @@ use Illuminate\Support\Str;
 class PhotographerController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -122,7 +102,10 @@ class PhotographerController extends Controller
         ]);
 
         if($validator->fails()) {
-            return response()->json(['message' => 'Validation Error', 'errors' => $validator->errors()], 422);
+            return response()->json([
+                'message' => 'Validation Error', 
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         $photographer->name = $request->name;
@@ -133,6 +116,9 @@ class PhotographerController extends Controller
         
         $photographer->save();
 
-        return response()->json(['message' => 'Photographer Account Created Successfully', 'photographer' => $photographer]);
+        return response()->json([
+            'message' => 'Photographer Account Created Successfully', 
+            'photographer' => $photographer
+        ]);
     }
 }
