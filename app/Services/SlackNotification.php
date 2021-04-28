@@ -20,14 +20,14 @@ class SlackNotification {
     public function sendNotification($message)
     {
         try {
-            $response = Http::post($this->slackHookUrl, $message);
+            $response = Http::post($this->slackHookUrl, $message);//->throw()->json()
             return $response->successful();
         } catch(\Exception $e) {
             return false;
         }
     }
 
-    public function prepareAndSendMessage($thumbnails, $dateUploaded, $photographer, $product)
+    public function prepareAndSendMessage($title, $images, $dateUploaded, $photographer, $product)
     {
         // Create Header and Details Blocks for Slack Web Hook Message
         $this->blocks = [
@@ -35,7 +35,7 @@ class SlackNotification {
                 "type" => "header",
                 "text" => [
                     "type" => "plain_text",
-                    "text" => "New Pictrues for $product",
+                    "text" => $title,
                     "emoji" => true
                 ]
             ],
@@ -55,7 +55,7 @@ class SlackNotification {
         ];
         
         // Append Thumbnails into Block Array
-        foreach($thumbnails as $key=>$thumbnail) {
+        foreach($images as $key=>$image) {
             array_push($this->blocks, 
             [
                 "type" => "image",
@@ -64,7 +64,7 @@ class SlackNotification {
                     "text" => "Photo".($key + 1)." of $product"
                 ],
                 "block_id" => "image".($key + 1),
-                "image_url" => $thumbnail,
+                "image_url" => $image,
                 "alt_text" => "Photo".($key + 1)
             ]);
         }

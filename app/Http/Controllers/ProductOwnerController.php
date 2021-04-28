@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Services\SlackNotification;
+use Carbon\Carbon;
 
 class ProductOwnerController extends Controller
 {
@@ -88,6 +90,15 @@ class ProductOwnerController extends Controller
         
         $productPhotograph->approved = $request->approved;
         $productPhotograph->save();
+        
+        $slackNotification = new SlackNotification($productPhotograph->product->product_owner->slack_hook_url);
+        $response = $slackNotification->prepareAndSendMessage(
+            "High Resolution Pictures for ".$productPhotograph->product->title,
+            json_decode($productPhotograph->high_resolution_images, true),
+            Carbon::now()->toFormattedDateString(),
+            $productPhotograph->photographer->brand, 
+            $productPhotograph->product->title
+        );
 
         $message = $request->approved ? 'Approved' : 'Disapproved';
 

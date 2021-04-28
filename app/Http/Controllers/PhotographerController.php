@@ -109,6 +109,7 @@ class PhotographerController extends Controller
         // Notifications to the slack web hook url provided by the product owners
         $slackNotification = new SlackNotification($product->product_owner->slack_hook_url);
         $response = $slackNotification->prepareAndSendMessage(
+            "Thumbnails for $product->title",
             $s3UploadResponse['thumbnails'],
             Carbon::now()->toFormattedDateString(),
             $photographer->brand, 
