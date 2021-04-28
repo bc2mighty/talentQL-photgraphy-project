@@ -125,9 +125,13 @@ class PhotographerController extends Controller
         $productPhotograph->approved = false;
 
         $productPhotograph->save();
+        $message = !$response ? 
+            ' But Notification could not be sent because of incorrect Slack Web Hook. 
+            You can view thumbnails json response instead from the API at 
+            /api/productOwner/{productOwnerID}/products/photographs/unapproved' : '';
 
         return response()->json([
-            'message' => 'Product Pictures Uploaded And Processed Successfully!',
+            'message' => 'Product Pictures Uploaded And Processed Successfully!'.$message,
         ]);
     }
 

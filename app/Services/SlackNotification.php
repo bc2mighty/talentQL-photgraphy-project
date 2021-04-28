@@ -19,9 +19,12 @@ class SlackNotification {
 
     public function sendNotification($message)
     {
-        return Http::post($this->slackHookUrl, $message)->throw(function ($response, $e) {
-            dd($e);
-        })->json();
+        try {
+            $response = Http::post($this->slackHookUrl, $message);
+            return $response->successful();
+        } catch(\Exception $e) {
+            return false;
+        }
     }
 
     public function prepareAndSendMessage($thumbnails, $dateUploaded, $photographer, $product)
@@ -53,7 +56,6 @@ class SlackNotification {
         
         // Append Thumbnails into Block Array
         foreach($thumbnails as $key=>$thumbnail) {
-            
             array_push($this->blocks, 
             [
                 "type" => "image",
@@ -96,9 +98,15 @@ class SlackNotification {
             ]
         ]);
 
+        // return [
+        //     "blocks" => $this->blocks
+        // ];
+
         $response = $this->sendNotification([
             "blocks" => $this->blocks
         ]);
+
+        // dd($response);
 
         return $response;
     }

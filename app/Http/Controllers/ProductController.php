@@ -107,9 +107,9 @@ class ProductController extends Controller
         // Verify product_owner_id if it matches Product's owner's ID
         $productOwner = ProductOwner::find($request->product_owner_id);
         
-        if(!$productOwner) 
+        if(!$productOwner || $productOwner->id != $product->product_owner_id) 
             return response()->json([
-                'message' => 'Product Owner ID Not Found'
+                'message' => 'Product Owner ID Mismatch'
             ], 422);
       
         // Save Product and return response
