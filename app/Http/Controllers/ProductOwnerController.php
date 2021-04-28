@@ -15,7 +15,7 @@ class ProductOwnerController extends Controller
     /**
      * Get all products created by Product Owner
      *
-     * @param  \App\Models\Product  $product
+     * @param  \App\Models\ProductOwner  $productOwner
      * @return \Illuminate\Http\Response
      */
     public function products(ProductOwner $productOwner): Object
@@ -27,38 +27,50 @@ class ProductOwnerController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Get All Unapproved Product Photograph Thumbnails.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\ProductOwner  $productOwner
+     * @return \Illuminate\Http\Response Object
      */
 
     public function unapproved(Request $request, ProductOwner $productOwner): Object
     {
         $photgraphs = $productOwner->unapprovedPhotographs;
 
-        return response()->json(['message' => 'All unapproved product photographs', 'photgraphs' => $photgraphs, 'productOwner' => $productOwner]);
+        return response()->json([
+            'message' => 'All unapproved product photographs', 
+            'photgraphs' => $photgraphs, 
+            'productOwner' => $productOwner
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Get All Approved Product Photograph Thumbnails and high Resolution Images.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\ProductOwner  $productOwner
+     * @return \Illuminate\Http\Response Object
      */
 
     public function approved(Request $request, ProductOwner $productOwner): Object
     {
         $photgraphs = $productOwner->approvedPhotographs;
 
-        return response()->json(['message' => 'All approved product photographs', 'photgraphs' => $photgraphs, 'productOwner' => $productOwner]);
+        return response()->json([
+            'message' => 'All approved product photographs', 
+            'photgraphs' => $photgraphs, 
+            'productOwner' => $productOwner
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Approve Product Photograph So that High resolution Images Can Show.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\ProductOwner  $productOwner
+     * @param  \App\Models\ProductPhotograph  $productPhotograph
+     * @return \Illuminate\Http\Response Object
      */
 
     public function approve(Request $request, ProductOwner $productOwner, ProductPhotograph $productPhotograph): Object
@@ -79,15 +91,20 @@ class ProductOwnerController extends Controller
 
         $message = $request->approved ? 'Approved' : 'Disapproved';
 
-        return response()->json(['message' => 'Product PhotoGraph '.$message.' Successfully', 'productPhotograph' => $productPhotograph, 'productOwner' => $productOwner]);
+        return response()->json([
+            'message' => 'Product PhotoGraph '.$message.' Successfully', 
+            'productPhotograph' => $productPhotograph, 
+            'productOwner' => $productOwner
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create Product Owner's Account.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response Object
      */
+
     public function store(Request $request): Object
     {
         $validator = Validator::make($request->all(), [
@@ -119,13 +136,16 @@ class ProductOwnerController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Set Products to be in Processing Facility so it could be
+     * Accessible by Photographers for Capturin Photographs of such Product.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\ProductOwner  $productOwner
      * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response Object
      */
-    public function product(Request $request, ProductOwner $productOwner, Product $product)
+
+    public function product(Request $request, ProductOwner $productOwner, Product $product): Object
     {
         $validator = Validator::make($request->all(), [
             'in_processing_facility' => 'required|boolean',
@@ -154,10 +174,10 @@ class ProductOwnerController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Login Product Owners.
      *
-     * @param  \App\Models\ProductOwner  $productOwner
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response Object
      */
     public function login(Request $request): Object
     {
@@ -193,12 +213,13 @@ class ProductOwnerController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update Product Owner.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\ProductOwner  $productOwner
      * @return \Illuminate\Http\Response
      */
+
     public function update(Request $request, ProductOwner $productOwner): Object
     {
         $validator = Validator::make($request->all(), [

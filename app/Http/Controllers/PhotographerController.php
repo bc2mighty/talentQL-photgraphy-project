@@ -60,7 +60,9 @@ class PhotographerController extends Controller
     /**
      * Store Product Pgotograph Objects.
      *
-     * @param  \Illuminate\Http\Request  $request with pictures array as body
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Photographer  $photographer
+     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response Object
      */
     public function pictures(Request $request, Photographer $photographer, Product $product): Object
@@ -132,7 +134,7 @@ class PhotographerController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Photographer  $photographer
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function login(Request $request): Object
