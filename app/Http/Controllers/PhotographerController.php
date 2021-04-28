@@ -12,14 +12,15 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Services\S3Upload;
 use App\Services\SlackNotification;
+use Carbon\Carbon;
 
 class PhotographerController extends Controller
 {
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Photograph Object.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response Object
      */
     public function store(Request $request): Object
     {
@@ -57,10 +58,10 @@ class PhotographerController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store Product Pgotograph Objects.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request  $request with pictures array as body
+     * @return \Illuminate\Http\Response Object
      */
     public function pictures(Request $request, Photographer $photographer, Product $product): Object
     {
@@ -76,10 +77,16 @@ class PhotographerController extends Controller
             ], 422);
         }
 
+        // If Product Has Not been sent to processing facility
+        // Unathorize Pictures upload for the product
         if(!$product->in_processing_facility) return response()->json([
                 'message' => 'Product is not in processing facility'
             ], 422);
 
+
+        // If Photographs have been taken for the Product
+        // By the same Photographer that wants to post the pictures again
+        // Unathorize such Photographer from performing that action
         $productPhotograph = ProductPhotograph::where([
             ['product_id', "=",$product->id],
             ['photographer_id', "=", $photographer->id],
@@ -90,17 +97,23 @@ class PhotographerController extends Controller
             ], 422);
 
         $pictures = $request->file('pictures');
+
+        // S3Service Upload for storing both
+        // High Resolution Images and It's Thumbnails
         $s3Upload = new S3Upload();
         $s3UploadResponse = json_decode($s3Upload->uploadAndGenerateThumbnail($pictures), true);
         
+        // slackNotification Service Created for posting pictures uploaded
+        // Notifications to the slack web hook url provided by the product owners
         $slackNotification = new SlackNotification($product->product_owner->slack_hook_url);
         $response = $slackNotification->prepareAndSendMessage(
             $s3UploadResponse['thumbnails'],
-            time(),
+            Carbon::now()->toFormattedDateString(),
             $photographer->brand, 
             $product->title
         );
         
+        // Save Product Photograph Links to s3 and Set Approval to false
         $productPhotograph = new ProductPhotograph();
         $productPhotograph->id = (string) Str::uuid();
         $productPhotograph->product_id = $product->id;
@@ -149,12 +162,12 @@ class PhotographerController extends Controller
                 'message' => 'Photographer Password Incorrect'
             ], 422);
 
-        $token = $photographer->createToken('Auth')->accessToken;
+        // $token = $photographer->createToken('Auth')->accessToken;
 
         return response()->json([
             'message' => 'Photographer Login Successful', 
             'photographer' => $photographer,
-            'token' => $token
+            // 'token' => $token
         ]);
     }
 
