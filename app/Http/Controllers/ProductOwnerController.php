@@ -91,20 +91,22 @@ class ProductOwnerController extends Controller
         $productPhotograph->approved = $request->approved;
         $productPhotograph->save();
         
-        $slackNotification = new SlackNotification($productPhotograph->product->product_owner->slack_hook_url);
-        $response = $slackNotification->prepareAndSendMessage(
-            "High Resolution Pictures for ".$productPhotograph->product->title,
-            json_decode($productPhotograph->high_resolution_images, true),
-            Carbon::now()->toFormattedDateString(),
-            $productPhotograph->photographer->brand, 
-            $productPhotograph->product->title
-        );
+        if($request->approved) {
+            $slackNotification = new SlackNotification($productPhotograph->product->product_owner->slack_hook_url);
+            $response = $slackNotification->prepareAndSendMessage(
+                "High Resolution Pictures for ".$productPhotograph->product->title,
+                json_decode($productPhotograph->high_resolution_images, true),
+                Carbon::now()->toFormattedDateString(),
+                $productPhotograph->photographer->brand, 
+                $productPhotograph->product->title
+            );
+        }
 
         $message = $request->approved ? 'Approved' : 'Disapproved';
 
         return response()->json([
             'message' => 'Product PhotoGraph '.$message.' Successfully', 
-            'productPhotograph' => $productPhotograph, 
+            'productPhotograph' =>  $request->approved ? $productOwner->approvedPhotographs : $productOwner->unapprovedPhotographs, 
             'productOwner' => $productOwner
         ]);
     }
