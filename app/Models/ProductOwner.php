@@ -13,7 +13,7 @@ class ProductOwner extends Model
     protected $primaryKey = 'id';
 
     public function products() {
-        return $this->hasManyThrough(Product::class, ProductPhotograph::class);
+        return $this->hasMany(Product::class);
     }
 
     public function unapprovedPhotographs() {
