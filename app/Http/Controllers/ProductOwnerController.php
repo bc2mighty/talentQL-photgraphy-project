@@ -115,7 +115,7 @@ class ProductOwnerController extends Controller
 
         return response()->json([
             'message' => 'ProductOwner Account Created Successfully'
-        ]);
+        ], 201);
     }
 
     /**

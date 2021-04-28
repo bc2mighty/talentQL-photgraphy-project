@@ -47,7 +47,10 @@ class PhotographerController extends Controller
         
         $photographer->save();
 
-        return response()->json(['message' => 'Photographer Account Created Successfully', $photographer]);
+        return response()->json([
+            'message' => 'Photographer Account Created Successfully',
+            'photographer' => $photographer
+        ], 201);
     }
 
     /**
@@ -142,7 +145,7 @@ class PhotographerController extends Controller
             'message' => 'Photographer Login Successful', 
             'photographer' => $photographer,
             'token' => $token
-        ]);
+        ], 201);
     }
 
     /**
