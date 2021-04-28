@@ -28,10 +28,10 @@ class ProductController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created product.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response Object
      */
     public function store(Request $request): Object
     {
@@ -47,6 +47,7 @@ class ProductController extends Controller
             ], 422);
         }
 
+        // Verify Product Owner ID if it's correct
         $productOwner = ProductOwner::find($request->product_owner_id);
         
         if(!$productOwner) 
@@ -54,6 +55,7 @@ class ProductController extends Controller
                 'message' => 'Product Owner ID Not Found'
             ], 422);
       
+        // Save Product and return response
         $product = new Product();
         $product->id = (string) Str::uuid();
         $product->title = $request->title;
@@ -68,12 +70,12 @@ class ProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display a particular Product.
      *
      * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response Object
      */
-    public function show(Product $product)
+    public function show(Product $product): Object
     {
         return response()->json([
             'message' => 'Product Details',
@@ -82,13 +84,13 @@ class ProductController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the a Product.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response Object
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, Product $product): Object
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required',
@@ -102,6 +104,7 @@ class ProductController extends Controller
             ], 422);
         }
 
+        // Verify product_owner_id if it matches Product's owner's ID
         $productOwner = ProductOwner::find($request->product_owner_id);
         
         if(!$productOwner) 
@@ -109,8 +112,8 @@ class ProductController extends Controller
                 'message' => 'Product Owner ID Not Found'
             ], 422);
       
+        // Save Product and return response
         $product->title = $request->title;
-        $product->product_owner_id = $request->product_owner_id;
         
         $product->save();
 
@@ -121,7 +124,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove product.
      *
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
