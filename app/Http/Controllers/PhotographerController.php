@@ -33,7 +33,10 @@ class PhotographerController extends Controller
         ]);
 
         if($validator->fails()) {
-            return response()->json(['message' => 'Validation Error', 'errors' => $validator->errors()], 422);
+            return response()->json([
+                'message' => 'Validation Error', 
+                'errors' => $validator->errors()
+            ], 422);
         }
       
         $photographer = new Photographer();
@@ -67,17 +70,24 @@ class PhotographerController extends Controller
         ]);
 
         if($validator->fails()) {
-            return response()->json(['message' => 'Validation Error', 'errors' => $validator->errors()], 422);
+            return response()->json([
+                'message' => 'Validation Error', 
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        if(!$product->in_processing_facility) return response()->json(['message' => 'Product is not in processing facility'], 422);
+        if(!$product->in_processing_facility) return response()->json([
+                'message' => 'Product is not in processing facility'
+            ], 422);
 
         $productPhotograph = ProductPhotograph::where([
             ['product_id', "=",$product->id],
             ['photographer_id', "=", $photographer->id],
         ])->count();
         
-        if($productPhotograph > 0) return response()->json(['message' => 'Photographer Already Uploaded Pictures for this Product'], 422);
+        if($productPhotograph > 0) return response()->json([
+                'message' => 'Photographer Already Uploaded Pictures for this Product'
+            ], 422);
 
         $pictures = $request->file('pictures');
         $s3Upload = new S3Upload();
