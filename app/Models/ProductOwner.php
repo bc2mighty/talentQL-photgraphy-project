@@ -13,6 +13,14 @@ class ProductOwner extends Model
     protected $primaryKey = 'id';
 
     public function products() {
-        return $this->hasMany(Product::class);
+        return $this->hasManyThrough(Product::class, ProductPhotograph::class);
+    }
+
+    public function unapprovedPhotographs() {
+        return $this->hasManyThrough(ProductPhotograph::class, Product::class)->select('thumbnails', 'products.title')->where([['approved', 0], ['products.in_processing_facility', 1]]);
+    }
+
+    public function approvedPhotographs() {
+        return $this->hasManyThrough(ProductPhotograph::class, Product::class)->select('thumbnails', 'products.title')->where('approved', 1);
     }
 }

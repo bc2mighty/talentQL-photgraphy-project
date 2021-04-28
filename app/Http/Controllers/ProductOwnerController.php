@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\ProductOwner;
+use App\Models\ProductPhotograph;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -23,6 +24,26 @@ class ProductOwnerController extends Controller
             'message' => 'All Products Owned By product Owner',
             'products' => $productOwner->products,
         ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function photographs(Request $request, ProductOwner $productOwner): Object
+    {
+        // $photgraphs = Product::where([
+        //     ['product_owner_id', $productOwner->id],
+        //     ['in_processing_facility', true],
+        // ])->with('photographs:thumbnails')
+        // ->get();
+
+        $photgraphs = $productOwner->unapprovedPhotographs;
+
+        return response()->json(['message' => 'All product photographs', 'photgraphs' => $photgraphs, 'productOwner' => $productOwner]);
     }
 
     /**

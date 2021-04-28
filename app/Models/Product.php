@@ -15,4 +15,8 @@ class Product extends Model
     public function product_owner() {
         return $this->belongsTo(ProductOwner::class);
     }
+
+    public function photographs() {
+        return $this->hasOne(ProductPhotograph::class);
+    }
 }

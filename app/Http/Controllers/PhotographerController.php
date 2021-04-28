@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Photographer;
 use App\Models\Product;
+use App\Models\ProductOwner;
 use App\Models\ProductPhotograph;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -46,8 +47,9 @@ class PhotographerController extends Controller
         
         $photographer->save();
 
-        return response()->json(['message' => 'Photographer Account Created Successfully']);
+        return response()->json(['message' => 'Photographer Account Created Successfully', $photographer]);
     }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -64,6 +66,15 @@ class PhotographerController extends Controller
         if($validator->fails()) {
             return response()->json(['message' => 'Validation Error', 'errors' => $validator->errors()], 422);
         }
+
+        if(!$product->in_processing_facility) return response()->json(['message' => 'Product is not in processing facility'], 422);
+
+        $productPhotograph = ProductPhotograph::where([
+            ['product_id', "=",$product->id],
+            ['photographer_id', "=", $photographer->id],
+        ])->count();
+        
+        if($productPhotograph > 0) return response()->json(['message' => 'Photographer Already Uploaded Pictures for this Product'], 422);
 
         $pictures = $request->file('pictures');
         $s3Upload = new S3Upload();
