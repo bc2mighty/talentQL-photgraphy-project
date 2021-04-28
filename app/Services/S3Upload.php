@@ -17,7 +17,8 @@ class S3Upload {
         $this->s3 = Storage::disk('s3');
     }
 
-    public function uploadAndGenerateThumbnail($pictures) {
+    public function uploadAndGenerateThumbnail($pictures)
+    {
         $this->pictures = $pictures;
         $this->highResolutionPictures = [];
         $this->thumbnails = [];

@@ -26,6 +26,7 @@ class SlackNotification {
 
     public function prepareAndSendMessage($thumbnails, $dateUploaded, $photographer, $product)
     {
+        // Create Header and Details Blocks for Slack Web Hook Message
         $this->blocks = [
             [
                 "type" => "header",
@@ -50,6 +51,7 @@ class SlackNotification {
             ]
         ];
         
+        // Append Thumbnails into Block Array
         foreach($thumbnails as $key=>$thumbnail) {
             
             array_push($this->blocks, 
@@ -65,6 +67,7 @@ class SlackNotification {
             ]);
         }
         
+        // Append Action Buttons Into Block Array
         array_push($this->blocks, 
         [
             "type" => "actions",
@@ -92,9 +95,6 @@ class SlackNotification {
                 ]
             ]
         ]);
-        // return [
-        //     "blocks" => $this->blocks
-        // ];
 
         $response = $this->sendNotification([
             "blocks" => $this->blocks
