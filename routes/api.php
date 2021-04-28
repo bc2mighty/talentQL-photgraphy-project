@@ -36,9 +36,9 @@ Route::group(['prefix' => 'productOwner'], function (){
     Route::post('/login', [ProductOwnerController::class, 'login']);
     Route::put('/{productOwner}/{product}', [ProductOwnerController::class, 'product']);
     Route::get('/{productOwner}/products', [ProductOwnerController::class, 'products']);
-    Route::get('/{productOwner}/products/photographs', [ProductOwnerController::class, 'photographs']);
-    Route::get('/{productOwner}/product/{product}/photographs', [ProductOwnerController::class, 'photograph']);
-    Route::get('/{productOwner}/photographs/{photograph}/approve', [ProductOwnerController::class, 'approve']);
+    Route::get('/{productOwner}/products/photographs/unapproved', [ProductOwnerController::class, 'unapproved']);
+    Route::get('/{productOwner}/products/photographs/approved', [ProductOwnerController::class, 'approved']);
+    Route::post('/{productOwner}/productPhotograph/{productPhotograph}/approve', [ProductOwnerController::class, 'approve']);
 });
 
 // Prouct Routes

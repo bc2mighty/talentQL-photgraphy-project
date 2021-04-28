@@ -17,10 +17,10 @@ class ProductOwner extends Model
     }
 
     public function unapprovedPhotographs() {
-        return $this->hasManyThrough(ProductPhotograph::class, Product::class)->select('thumbnails', 'products.title')->where([['approved', 0], ['products.in_processing_facility', 1]]);
+        return $this->hasManyThrough(ProductPhotograph::class, Product::class)->select('thumbnails', 'products.title', 'product_photographs.id')->where([['approved', 0], ['products.in_processing_facility', 1]]);
     }
 
     public function approvedPhotographs() {
-        return $this->hasManyThrough(ProductPhotograph::class, Product::class)->select('thumbnails', 'products.title')->where('approved', 1);
+        return $this->hasManyThrough(ProductPhotograph::class, Product::class)->select('thumbnails', 'high_resolution_images', 'product_photographs.id', 'products.title')->where('approved', 1);
     }
 }

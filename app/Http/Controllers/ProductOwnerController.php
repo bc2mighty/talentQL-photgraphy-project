@@ -33,17 +33,53 @@ class ProductOwnerController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function photographs(Request $request, ProductOwner $productOwner): Object
+    public function unapproved(Request $request, ProductOwner $productOwner): Object
     {
-        // $photgraphs = Product::where([
-        //     ['product_owner_id', $productOwner->id],
-        //     ['in_processing_facility', true],
-        // ])->with('photographs:thumbnails')
-        // ->get();
-
         $photgraphs = $productOwner->unapprovedPhotographs;
 
-        return response()->json(['message' => 'All product photographs', 'photgraphs' => $photgraphs, 'productOwner' => $productOwner]);
+        return response()->json(['message' => 'All unapproved product photographs', 'photgraphs' => $photgraphs, 'productOwner' => $productOwner]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function approved(Request $request, ProductOwner $productOwner): Object
+    {
+        $photgraphs = $productOwner->approvedPhotographs;
+
+        return response()->json(['message' => 'All approved product photographs', 'photgraphs' => $photgraphs, 'productOwner' => $productOwner]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function approve(Request $request, ProductOwner $productOwner, ProductPhotograph $productPhotograph): Object
+    {
+        $validator = Validator::make($request->all(), [
+            'approved' => 'required|boolean',
+        ]);
+
+        if($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation Error', 
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        
+        $productPhotograph->approved = $request->approved;
+        $productPhotograph->save();
+
+        $message = $request->approved ? 'Approved' : 'Disapproved';
+
+        return response()->json(['message' => 'Product PhotoGraph '.$message.' Successfully', 'productPhotograph' => $productPhotograph, 'productOwner' => $productOwner]);
     }
 
     /**
