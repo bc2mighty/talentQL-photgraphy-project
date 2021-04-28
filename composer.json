@@ -11,11 +11,13 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "intervention/image": "^2.5",
         "laravel/framework": "^8.12",
+        "laravel/passport": "^10.1",
         "laravel/tinker": "^2.5",
         "league/flysystem-aws-s3-v3": "~1.0",
         "league/flysystem-cached-adapter": "~1.0"
     },
     "require-dev": {
+        "brianium/paratest": "^6.3",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",

@@ -136,9 +136,12 @@ class PhotographerController extends Controller
                 'message' => 'Photographer Password Incorrect'
             ], 422);
 
+        $token = $photographer->createToken('Auth')->accessToken;
+
         return response()->json([
             'message' => 'Photographer Login Successful', 
-            'photographer' => $photographer
+            'photographer' => $photographer,
+            'token' => $token
         ]);
     }
 
