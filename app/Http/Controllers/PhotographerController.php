@@ -145,7 +145,7 @@ class PhotographerController extends Controller
             'message' => 'Photographer Login Successful', 
             'photographer' => $photographer,
             'token' => $token
-        ], 201);
+        ]);
     }
 
     /**

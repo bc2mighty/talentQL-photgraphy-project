@@ -24,4 +24,18 @@ class PhotographerApiTest extends TestCase
         $response
             ->assertStatus(201);
     }
+    
+    /** @test */
+    public function photographer_login()
+    {
+        $testData = [
+            "email" => "shadesegun4@gmail.com",
+            "password" => "mighty"
+        ];
+
+        $response = $this->json("POST", '/api/photographer/login', $testData);
+
+        $response
+            ->assertStatus(200);
+    }
 }

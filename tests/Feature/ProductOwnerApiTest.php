@@ -22,4 +22,18 @@ class ProductOwnerApiTest extends TestCase
         $response
             ->assertStatus(201);
     }
+    
+    /** @test */
+    public function product_owner_login()
+    {
+        $testData = [
+            "email" => "apexwaters@gmail.com",
+            "password" => "mighty"
+        ];
+
+        $response = $this->json("POST", '/api/productOwner/login', $testData);
+
+        $response
+            ->assertStatus(200);
+    }
 }
